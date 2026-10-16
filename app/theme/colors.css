@@ -1,0 +1,15 @@
+/* Cores extraídas de spenvolt-logo.svg — Tailwind CSS v4 */
+
+@theme {
+  --color-green-start: #8bff5e;
+  --color-green-end: #1fd38a;
+  --color-blue-start: #00c6ff;
+  --color-blue-end: #1d6bff;
+  --color-yellow: #ffd43b;
+}
+
+/* Gradientes originais da logo, disponíveis também em CSS comum */
+:root {
+  --gradient-green: linear-gradient(135deg, var(--color-green-start), var(--color-green-end));
+  --gradient-blue: linear-gradient(135deg, var(--color-blue-start), var(--color-blue-end));
+}
