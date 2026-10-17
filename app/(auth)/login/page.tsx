@@ -17,8 +17,9 @@ export default function LoginPage() {
     setLoading(true);
     const form = new FormData(e.currentTarget);
     try {
-      const user = await login(String(form.get('email')), String(form.get('password')));
-      localStorage.setItem('spenvolt:user', JSON.stringify(user)); // provisório
+      const response = await login(String(form.get('email')), String(form.get('password')));
+      sessionStorage.setItem('token', response.token);
+      sessionStorage.setItem('token_expiration', String(Date.now() + 60 * 60 * 1000));
       router.push('/');
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) setError('E-mail ou senha incorretos.');

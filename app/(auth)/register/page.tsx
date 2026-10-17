@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { login } from '@/lib/api/auth';
+import { register } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
 import SpenvoltLogo from '@/components/spenvolt_logo';
 
@@ -17,7 +17,7 @@ export default function RegisterPage() {
     setLoading(true);
     const form = new FormData(e.currentTarget);
     try {
-      const user = await login(String(form.get('email')), String(form.get('password')));
+      const user = await register(String(form.get('email')), String(form.get('password')));
       localStorage.setItem('spenvolt:user', JSON.stringify(user)); // provisório
       router.push('/');
     } catch (err) {
@@ -100,7 +100,7 @@ export default function RegisterPage() {
             disabled={loading}
             className="h-9 rounded-xl bg-[#72F45B] text-sm font-bold text-[#0E1A2B] disabled:opacity-60"
           >
-            {loading ? 'Entrando...' : 'Entrar'}
+            {loading ? 'Cadastrando...' : 'Cadastrar'}
           </button>
 
           <p className="text-center text-xs text-slate-500">
