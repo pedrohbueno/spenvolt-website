@@ -28,11 +28,6 @@ export default function DevicesPage() {
 
     return (
         <>
-            <SpenVoltLogo />
-            <p className="text-2xl font-bold">
-                Spen<span className="text-[#FFD43B]">Volt</span>
-            </p>
-            <p className="mb-2 text-sm text-slate-300">Energia sob controle, casa em harmonia.</p>
 
             <form onSubmit={onSubmit} className="flex flex-col gap-4">
                 <label className="flex flex-col gap-1.5 text-sm text-slate-500">

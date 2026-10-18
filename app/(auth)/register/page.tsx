@@ -30,10 +30,10 @@ export default function RegisterPage() {
   }
 
     return (
-    <div className="grid min-h-screen w-full grid-cols-[minmax(0,52fr)_minmax(0,48fr)]">
+    <div className="grid min-h-screen w-full grid-cols-1 md:grid-cols-[minmax(0,52fr)_minmax(0,48fr)]">
       <section className="grid place-items-center content-center bg-[#0E1A2B] px-12 text-white">
         
-          <SpenVoltLogo />
+          <SpenVoltLogo className="h-auto w-full max-w-xs" />
 
           <h2 className="mt-5 text-3xl font-bold leading-tight">
             Energia sob <span className="text-yellow">controle</span>,

@@ -3,10 +3,32 @@
 import { NAV_ITEMS } from "@/lib/site";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import SpenVoltLogo from "@/components/spenvolt_logo";
+
+function ProfileIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={1.5}
+      stroke="currentColor"
+      className="h-10 w-10 rounded-full bg-white p-1 text-dark-blue"
+      aria-hidden="true"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.178a8.002 8.002 0 0115.998 0"
+      />
+    </svg>
+  );
+}
 
 export default function Header() {
   const pathname = usePathname();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <header
@@ -14,19 +36,63 @@ export default function Header() {
         "bg-bg/80 backdrop-blur-md border-b border-border-soft bg-dark-blue text-white"
       }`}
     >
-      <div className="mx-5 section-shell flex h-20 items-center justify-between">
-        <div className="flex items-center gap-2">
-            <Link
-                href="/"
-                className="font-display text-xl font-bold tracking-tight bg-gradient-to-r from-purple-soft via-purple to-blue bg-clip-text text-transparent"
-            >
-                < SpenVoltLogo className="h-13 w-auto mx-5" />
-            </Link>
-            <h2 className="mx-5 text-3xl font-bold leading-tight">
-                Spen<span className="text-yellow">Volt</span>
-            </h2>
+      <div className="relative mx-5 section-shell flex h-20 items-center justify-between">
+        <button
+          type="button"
+          aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-navigation"
+          onClick={() => setIsMenuOpen((open) => !open)}
+          className="flex h-10 w-10 items-center justify-center rounded-lg text-white hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow lg:hidden"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="h-6 w-6"
+            aria-hidden="true"
+          >
+            {isMenuOpen ? (
+              <path
+                strokeLinecap="round"
+                d="M6 6l12 12M18 6L6 18"
+              />
+            ) : (
+              <path
+                strokeLinecap="round"
+                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+              />
+            )}
+          </svg>
+        </button>
+
+        <div className="flex max-w-sm flex-1 items-center justify-center gap-2 lg:flex-none lg:justify-start">
+          <Link
+            href="/"
+            aria-label="SpenVolt - Início"
+            className="font-display text-xl font-bold tracking-tight bg-gradient-to-r from-purple-soft via-purple to-blue bg-clip-text text-transparent"
+          >
+            <SpenVoltLogo className="h-10 w-auto lg:mx-5 lg:h-13" />
+          </Link>
+          <h2 className="text-xl font-bold leading-tight lg:mx-5 lg:text-3xl">
+            Spen<span className="text-yellow">Volt</span>
+          </h2>
         </div>
-        <nav aria-label="Navegação principal" className="hidden md:block">
+
+        <Link
+          href="/profile"
+          aria-label="Perfil"
+          className="flex h-10 w-10 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow lg:hidden"
+        >
+          <ProfileIcon />
+        </Link>
+
+        <nav
+          aria-label="Navegação principal"
+          className="hidden items-center gap-6 lg:flex"
+        >
           <ul className="flex items-center gap-9">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
@@ -49,27 +115,39 @@ export default function Header() {
             <li key="profile">
               <Link
                 href="/profile"
-                className=""
+                aria-label="Perfil"
+                className="rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="h-10 w-10 mx-10 bg-white rounded-full p-1 text-dark-blue"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.178a8.002 8.002 0 0115.998 0"
-                  />
-                </svg>
+                <ProfileIcon />
               </Link>
             </li>
           </ul>
         </nav>
       </div>
+      <nav
+        id="mobile-navigation"
+        aria-label="Navegação móvel"
+        className={`${isMenuOpen ? "block" : "hidden"} border-t border-white/10 bg-dark-blue px-5 py-3 shadow-lg lg:hidden`}
+      >
+        <ul className="section-shell flex flex-col">
+          {NAV_ITEMS.map((item) => (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                aria-current={pathname === item.href ? "page" : undefined}
+                onClick={() => setIsMenuOpen(false)}
+                className={`block rounded-lg px-3 py-3 font-body text-sm transition-colors duration-200 ${
+                  pathname === item.href
+                    ? "text-yellow"
+                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </header>
   );
 }
