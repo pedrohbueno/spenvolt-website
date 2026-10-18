@@ -7,7 +7,7 @@ export class ApiError extends Error {
 }
 
 const basic = btoa(
-  `${process.env.API_USER}:${process.env.API_PASSWORD}`,
+  `${process.env.APP_SECURITY_USER}:${process.env.APP_SECURITY_PASSWORD}`,
 );
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {

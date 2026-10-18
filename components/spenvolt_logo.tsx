@@ -1,12 +1,13 @@
 
-export default function SpenvoltLogo() {
+export default function SpenVoltLogo({ width = 256, height = 302, className = "" }: { width?: number; height?: number; className?: string }) {
   return (
     <svg
       version="1.2"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 256 302"
-      width="256"
-      height="302"
+      width={width}
+      height={height}
+      className={className}
       fill="none"
       aria-label="Spenvolt"
       role="img"

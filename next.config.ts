@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   env: {
     API_URL: process.env.API_URL,
-    API_USER: process.env.API_USER,
-    API_PASSWORD: process.env.API_PASSWORD,
+    APP_SECURITY_USER: process.env.APP_SECURITY_USER,
+    APP_SECURITY_PASSWORD: process.env.APP_SECURITY_PASSWORD,
   },
   cacheComponents: true,
   partialPrefetching: true,

@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import Image from 'next/image';
 import { search } from '@/lib/api/devices';
 import type { Device } from '@/types/devices';
+import SpenVoltLogo from '@/components/spenvolt_logo';
 
 export default function DevicesPage() {
     const [device, setDevice] = useState<Device | null>(null);
@@ -17,7 +17,7 @@ export default function DevicesPage() {
         setLoading(true);
         const form = new FormData(e.currentTarget);
         try {
-            console.log('URL:', process.env.API_URL, '| user:', process.env.API_USER);
+            console.log('URL:', process.env.API_URL, '| user:', process.env.APP_SECURITY_USER);
             setDevice(await search(Number(form.get('id'))));
         } catch {
             setError('Dispositivo não encontrado ou API indisponível.');
@@ -28,7 +28,7 @@ export default function DevicesPage() {
 
     return (
         <>
-            <Image src="/brand/spenvolt-logo.svg" alt="SpenVolt" width={120} height={120} priority className="h-auto w-[120px]" />
+            <SpenVoltLogo />
             <p className="text-2xl font-bold">
                 Spen<span className="text-[#FFD43B]">Volt</span>
             </p>

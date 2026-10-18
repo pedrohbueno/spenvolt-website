@@ -6,6 +6,6 @@ function required(name: string): string {
 
 export const env = {
   apiUrl: process.env.API_URL ?? 'http://localhost:8080',
-  apiUser: required('API_USER'),
-  apiPassword: required('API_PASSWORD'),
+  apiUser: required('APP_SECURITY_USER'),
+  apiPassword: required('APP_SECURITY_PASSWORD'),
 };

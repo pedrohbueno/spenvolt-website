@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { register } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
-import SpenvoltLogo from '@/components/spenvolt_logo';
+import SpenVoltLogo from '@/components/spenvolt_logo';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -33,7 +33,7 @@ export default function RegisterPage() {
     <div className="grid min-h-screen w-full grid-cols-[minmax(0,52fr)_minmax(0,48fr)]">
       <section className="grid place-items-center content-center bg-[#0E1A2B] px-12 text-white">
         
-          <SpenvoltLogo />
+          <SpenVoltLogo />
 
           <h2 className="mt-5 text-3xl font-bold leading-tight">
             Energia sob <span className="text-yellow">controle</span>,
