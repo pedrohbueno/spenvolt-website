@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { register } from '@/lib/api/auth';
-import { ApiError } from '@/lib/api/client';
 import SpenVoltLogo from '@/components/spenvolt_logo';
 
 export default function RegisterPage() {
@@ -18,28 +17,25 @@ export default function RegisterPage() {
     const form = new FormData(e.currentTarget);
     try {
       const user = await register(String(form.get('email')), String(form.get('password')));
-      localStorage.setItem('spenvolt:user', JSON.stringify(user)); // provisório
+      localStorage.setItem('spenvolt:user', JSON.stringify(user));
       router.push('/');
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) setError('E-mail ou senha incorretos.');
-      else if (err instanceof ApiError && err.status === 0) setError(err.message);
-      else setError('Algo deu errado. Tente novamente.');
+    } catch {
+      setError('Algo deu errado. Tente novamente.');
     } finally {
       setLoading(false);
     }
   }
 
-    return (
+  return (
     <div className="grid min-h-screen w-full grid-cols-1 md:grid-cols-[minmax(0,52fr)_minmax(0,48fr)]">
       <section className="grid place-items-center content-center bg-[#0E1A2B] px-12 text-white">
-        
-          <SpenVoltLogo className="h-auto w-full max-w-xs" />
+        <SpenVoltLogo className="h-auto w-full max-w-xs" />
 
-          <h2 className="mt-5 text-3xl font-bold leading-tight">
-            Energia sob <span className="text-yellow">controle</span>,
-            <br />
-            casa em <span className="text-[#72F45B]">harmonia</span>.
-          </h2>
+        <h2 className="mt-5 text-3xl font-bold leading-tight">
+          Energia sob <span className="text-yellow">controle</span>,
+          <br />
+          casa em <span className="text-[#72F45B]">harmonia</span>.
+        </h2>
       </section>
 
       <section className="grid place-items-center bg-[#E2E8F0] p-8">
@@ -49,7 +45,6 @@ export default function RegisterPage() {
         >
           <h1 className="text-center text-2xl font-bold">Cadastrar</h1>
 
-          {/* barra alinhada à esquerda (sem mx-auto) */}
           <div className="h-1 w-11 rounded-full bg-linear-to-r from-[#72F45B] via-yellow to-sky-500" />
 
           <p className="text-center text-xs text-slate-500">
@@ -84,7 +79,7 @@ export default function RegisterPage() {
               name="password"
               type="password"
               required
-              autoComplete="current-password"
+              autoComplete="new-password"
               className="h-9 rounded-xl border border-slate-300 bg-slate-50 px-3 text-sm text-[#1B2A41]"
             />
           </label>

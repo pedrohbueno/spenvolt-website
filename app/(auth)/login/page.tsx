@@ -3,7 +3,6 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/lib/api/auth';
-import { ApiError } from '@/lib/api/client';
 import SpenVoltLogo from '@/components/spenvolt_logo';
 
 export default function LoginPage() {
@@ -21,26 +20,23 @@ export default function LoginPage() {
       sessionStorage.setItem('token', response.token);
       sessionStorage.setItem('token_expiration', String(Date.now() + 60 * 60 * 1000));
       router.push('/');
-    } catch (err) {
-      if (err instanceof ApiError && err.status === 401) setError('E-mail ou senha incorretos.');
-      else if (err instanceof ApiError && err.status === 0) setError(err.message);
-      else setError('Algo deu errado. Tente novamente.');
+    } catch {
+      setError('E-mail ou senha incorretos, ou algo deu errado. Tente novamente.');
     } finally {
       setLoading(false);
     }
   }
 
-    return (
+  return (
     <div className="grid min-h-screen w-full grid-cols-1 md:grid-cols-[minmax(0,52fr)_minmax(0,48fr)]">
       <section className="grid place-items-center content-center bg-[#0E1A2B] px-12 text-white">
-        
-          <SpenVoltLogo className="h-auto w-full max-w-xs" />
+        <SpenVoltLogo className="h-auto w-full max-w-xs" />
 
-          <h2 className="mt-5 text-3xl font-bold leading-tight">
-            Energia sob <span className="text-yellow">controle</span>,
-            <br />
-            casa em <span className="text-[#72F45B]">harmonia</span>.
-          </h2>
+        <h2 className="mt-5 text-3xl font-bold leading-tight">
+          Energia sob <span className="text-yellow">controle</span>,
+          <br />
+          casa em <span className="text-[#72F45B]">harmonia</span>.
+        </h2>
       </section>
 
       <section className="grid place-items-center bg-[#E2E8F0] p-8">
@@ -50,7 +46,6 @@ export default function LoginPage() {
         >
           <h1 className="text-center text-2xl font-bold">Entrar</h1>
 
-          {/* barra alinhada à esquerda (sem mx-auto) */}
           <div className="h-1 w-11 rounded-full bg-linear-to-r from-[#72F45B] via-yellow to-sky-500" />
 
           <p className="text-center text-xs text-slate-500">

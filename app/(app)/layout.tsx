@@ -9,7 +9,7 @@ export default function AuthenticatedLayout({
 }) {
   return <AuthSession>
       <Header />
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
+      <main className="p-8">
         {children}
       </main>
     </AuthSession>;

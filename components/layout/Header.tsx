@@ -148,6 +148,7 @@ export default function Header() {
           ))}
         </ul>
       </nav>
+      <div className="bg-yellow " style={{ height: '4px' }}></div>
     </header>
   );
 }
