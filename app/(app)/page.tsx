@@ -7,8 +7,11 @@ import Carousel from "@/components/carousel";
 
 export default function Home() {
   const [residences, setResidences] = useState<Residence[]>([]);
+  const [name, setName] = useState('');
   useEffect(() => {
     const token = sessionStorage.getItem('token') ?? '';
+    const userName = sessionStorage.getItem('name') ?? '';
+    setName(userName);
     setResidences([]);
     findAll(token).then((data) => {
       
@@ -21,7 +24,7 @@ export default function Home() {
   return (
     <main className="p-8">
       <div className="mt-15 rounded-xl bg-dark-blue w-full h-34 flex items-center justify-between p-8">
-        <h1 className="text-white">Olá, {sessionStorage.getItem('name')}! Seja bem-vindo.</h1>
+        <h1 className="text-white">Olá, {name}! Seja bem-vindo.</h1>
         <div className="flex">
           <h1 className="text-yellow">
             {residences.reduce((sum, r) => sum + (r.monthlyCostLimit || 0), 0).toFixed(2)}
