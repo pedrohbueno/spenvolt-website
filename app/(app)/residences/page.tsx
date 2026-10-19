@@ -1,3 +1,4 @@
+'use client';
 import type { Residence } from '@/types/residences';
 import { findAll } from '@/lib/api/residences';
 import { useEffect } from 'react';
