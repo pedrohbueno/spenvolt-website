@@ -72,7 +72,7 @@ export default function Header() {
           <Link
             href="/"
             aria-label="SpenVolt - Início"
-            className="font-display text-xl font-bold tracking-tight bg-gradient-to-r from-purple-soft via-purple to-blue bg-clip-text text-transparent"
+            className="font-display text-xl font-bold tracking-tight bg-linear-to-r from-purple-soft via-purple to-blue bg-clip-text text-transparent"
           >
             <SpenVoltLogo className="h-10 w-auto lg:mx-5 lg:h-13" />
           </Link>
@@ -107,7 +107,7 @@ export default function Header() {
                 >
                   {item.label}
                   {pathname === item.href && (
-                    <span className="absolute -bottom-0.5 left-0 h-[2px] w-full rounded-full bg-gradient-to-r from-purple to-blue" />
+                    <span className="absolute -bottom-0.5 left-0 h-0.5 w-full rounded-full bg-linear-to-r from-purple to-blue" />
                   )}
                 </Link>
               </li>

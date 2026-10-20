@@ -16,7 +16,7 @@ export default function RegisterPage() {
     setLoading(true);
     const form = new FormData(e.currentTarget);
     try {
-      const user = await register(String(form.get('email')), String(form.get('password')));
+      const user = await register(String(form.get('name')), String(form.get('email')), String(form.get('password')));
       localStorage.setItem('spenvolt:user', JSON.stringify(user));
       router.push('/');
     } catch {
@@ -28,7 +28,7 @@ export default function RegisterPage() {
 
   return (
     <div className="grid min-h-screen w-full grid-cols-1 md:grid-cols-[minmax(0,52fr)_minmax(0,48fr)]">
-      <section className="grid place-items-center content-center bg-[#0E1A2B] px-12 text-white">
+      <section className="grid place-items-center content-center bg-dark-blue px-12 text-white">
         <SpenVoltLogo className="h-auto w-full max-w-xs" />
 
         <h2 className="mt-5 text-3xl font-bold leading-tight">
@@ -93,7 +93,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="h-9 rounded-xl bg-[#72F45B] text-sm font-bold text-[#0E1A2B] disabled:opacity-60"
+            className="h-9 rounded-xl bg-[#72F45B] text-sm font-bold text-dark-blue disabled:opacity-60"
           >
             {loading ? 'Cadastrando...' : 'Cadastrar'}
           </button>

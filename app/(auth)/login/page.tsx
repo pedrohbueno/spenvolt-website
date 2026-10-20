@@ -17,8 +17,11 @@ export default function LoginPage() {
     const form = new FormData(e.currentTarget);
     try {
       const response = await login(String(form.get('email')), String(form.get('password')));
-      sessionStorage.setItem('token', response.token);
-      sessionStorage.setItem('token_expiration', String(Date.now() + 60 * 60 * 1000));
+      const token = response.token;
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      sessionStorage.setItem('token', token);
+      sessionStorage.setItem('name', payload.name);
+      sessionStorage.setItem('token_expiration', String(payload.exp * 1000));
       router.push('/');
     } catch {
       setError('E-mail ou senha incorretos, ou algo deu errado. Tente novamente.');
@@ -29,7 +32,7 @@ export default function LoginPage() {
 
   return (
     <div className="grid min-h-screen w-full grid-cols-1 md:grid-cols-[minmax(0,52fr)_minmax(0,48fr)]">
-      <section className="grid place-items-center content-center bg-[#0E1A2B] px-12 text-white">
+      <section className="grid place-items-center content-center bg-dark-blue px-12 text-white">
         <SpenVoltLogo className="h-auto w-full max-w-xs" />
 
         <h2 className="mt-5 text-3xl font-bold leading-tight">
@@ -83,7 +86,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="h-9 rounded-xl bg-[#72F45B] text-sm font-bold text-[#0E1A2B] disabled:opacity-60"
+            className="h-9 rounded-xl bg-[#72F45B] text-sm font-bold text-dark-blue disabled:opacity-60"
           >
             {loading ? 'Entrando...' : 'Entrar'}
           </button>

@@ -9,7 +9,7 @@ export default function AuthenticatedLayout({
 }) {
   return <AuthSession>
       <Header />
-      <main className="p-8">
+      <main className="px-4 pb-8 pt-20 sm:px-8 lg:px-16">
         {children}
       </main>
     </AuthSession>;
