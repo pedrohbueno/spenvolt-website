@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
-import { findAll } from '@/lib/api/residences';
-import { findHistory, HistoryItem } from '@/lib/api/history';
+import { findResidences } from '@/lib/api/residences';
+import { findHistory } from '@/lib/api/history';
 import { Residence } from '@/types/residences';
 import { computeStatus } from '@/lib/consumption';
 import { brl, num } from '@/lib/format';
@@ -11,6 +11,7 @@ import Carousel from '@/components/carousel';
 import { EmptyResidences, ResidenceCard } from '@/components/residences/ResidenceCard';
 import { HistorySection } from '@/components/residences/HistorySection';
 import { getUsage } from '@/lib/api/usage';
+import type { History } from '@/types/history';
 
 /* -------------------------------------------------------------------------- */
 /* Sessão (mantido como estava)                                               */
@@ -31,7 +32,7 @@ function getStoredName() {
 
 export default function Home() {
   const [residences, setResidences] = useState<Residence[]>([]);
-  const [history, setHistory] = useState<HistoryItem[]>([]);
+  const [history, setHistory] = useState<History[]>([]);
   const [loadingResidences, setLoadingResidences] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +43,7 @@ export default function Home() {
     // Mantido por compatibilidade com lib/api; migrar para cookie httpOnly (BFF) depois.
     const token = sessionStorage.getItem('token') ?? '';
 
-    findAll(token)
+    findResidences(token)
       .then(setResidences) // output da API: Residence[]
       .catch((e) => {
         console.error('Error fetching residences:', e);

@@ -14,14 +14,14 @@ export async function create(
   });
 }
 
-export async function search(token: string, id: number) {
+export async function searchResidence(token: string, id: number) {
   return api<Residence>('/residences/' + id, {
     method: 'GET',
     token,
   });
 }
 
-export async function findAll(token: string) {
+export async function findResidences(token: string) {
   return api<Residence[]>('/residences', {
     method: 'GET',
     token,
