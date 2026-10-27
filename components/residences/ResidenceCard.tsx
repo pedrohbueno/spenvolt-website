@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { Residence } from '@/types/residences';
-import { Status, computeStatus, usagePercent } from '@/lib/consumption';
 import { brl, num } from '@/lib/format';
-import { getUsage } from '@/lib/api/usage';
+import { Status, Usage, computeStatus, usagePercent } from '@/lib/consumption';
 
 const STATUS_UI: Record<Status, { label: string; badge: string; bar: string }> = {
   ok: { label: 'Tranquilo', badge: 'bg-green-500 text-white', bar: 'bg-green-500' },
@@ -11,8 +10,7 @@ const STATUS_UI: Record<Status, { label: string; badge: string; bar: string }> =
   'no-limit': { label: 'Sem limite', badge: 'bg-gray-300 text-gray-800', bar: 'bg-gray-400' },
 };
 
-export function ResidenceCard({ residence: r }: { residence: Residence }) {
-  const usage = getUsage(r); // TODO(API): ver getUsage
+export function ResidenceCard({ residence: r, usage }: { residence: Residence; usage: Usage }) {
   const limitKwh = r.monthlyKwhLimit ?? 0;
   const status = computeStatus(usage.kwh, limitKwh, r.alertThresholdPercent);
   const ui = STATUS_UI[status];
@@ -20,15 +18,19 @@ export function ResidenceCard({ residence: r }: { residence: Residence }) {
   const remaining = limitKwh ? limitKwh - usage.kwh : null;
 
   return (
-    <article className="w-100 max-w-[85vw] shrink-0 snap-start rounded-xl bg-white shadow-lg">
+    <article className="w-full rounded-xl bg-white shadow-lg transition-shadow duration-300 hover:shadow-2xl">
       <div className="px-6 py-5">
         <div className="mb-1 flex items-center justify-between gap-4">
-          <h2 className="text-lg font-bold text-dark-blue">{r.name}</h2>
-          <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${ui.badge}`}>
+          <h2 className="min-w-0 truncate text-lg font-bold text-dark-blue" title={r.name}>
+            {r.name}
+          </h2>
+          <span
+            className={`max-w-50 shrink-0 truncate whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${ui.badge}`}
+          >
             {ui.label}
           </span>
         </div>
-        <p className="mb-4 text-sm text-gray-500">{r.address}</p>
+        <p className="mb-4 text-sm truncate text-gray-500">{r.address}</p>
 
         <dl className="grid grid-cols-3 gap-2">
           <div>

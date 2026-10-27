@@ -3,19 +3,15 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { findResidences } from '@/lib/api/residences';
+import { findDevicesByResidence } from '@/lib/api/devices';
 import { findHistory } from '@/lib/api/history';
 import { Residence } from '@/types/residences';
-import { computeStatus } from '@/lib/consumption';
+import { NO_USAGE, computeStatus, sumUsage, type Usage } from '@/lib/consumption';
 import { brl, num } from '@/lib/format';
 import Carousel from '@/components/carousel';
 import { EmptyResidences, ResidenceCard } from '@/components/residences/ResidenceCard';
 import { HistorySection } from '@/components/residences/HistorySection';
-import { getUsage } from '@/lib/api/usage';
 import type { History } from '@/types/history';
-
-/* -------------------------------------------------------------------------- */
-/* Sessão (mantido como estava)                                               */
-/* -------------------------------------------------------------------------- */
 
 function subscribeToName(callback: () => void) {
   window.addEventListener('storage', callback);
@@ -26,12 +22,9 @@ function getStoredName() {
   return sessionStorage.getItem('name') ?? '';
 }
 
-/* -------------------------------------------------------------------------- */
-/* Página                                                                     */
-/* -------------------------------------------------------------------------- */
-
 export default function Home() {
   const [residences, setResidences] = useState<Residence[]>([]);
+  const [usages, setUsages] = useState<Record<number, Usage>>({});
   const [history, setHistory] = useState<History[]>([]);
   const [loadingResidences, setLoadingResidences] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
@@ -44,7 +37,16 @@ export default function Home() {
     const token = sessionStorage.getItem('token') ?? '';
 
     findResidences(token)
-      .then(setResidences) // output da API: Residence[]
+      .then(async (list) => {
+        const entries = await Promise.all(
+          list.map(async (r) => {
+            const usage = await findDevicesByResidence(token, r.id).then(sumUsage, () => NO_USAGE);
+            return [r.id, usage] as const;
+          }),
+        );
+        setResidences(list);
+        setUsages(Object.fromEntries(entries));
+      })
       .catch((e) => {
         console.error('Error fetching residences:', e);
         setError('Não foi possível carregar suas residências. Tente novamente.');
@@ -57,28 +59,20 @@ export default function Home() {
       .finally(() => setLoadingHistory(false));
   }, []);
 
-  // Totais do resumo: somam o consumo REAL de cada residência (getUsage),
-  // e não os limites configurados, como era antes.
+  const usageOf = (r: Residence) => usages[r.id] ?? NO_USAGE;
+  const statusOf = (r: Residence) =>
+    computeStatus(usageOf(r).kwh, r.monthlyKwhLimit, r.alertThresholdPercent);
+
   const totals = residences.reduce(
-    (acc, r) => {
-      const u = getUsage(r); // TODO(API): ver getUsage
-      return { kwh: acc.kwh + u.kwh, cost: acc.cost + u.cost };
-    },
-    { kwh: 0, cost: 0 },
+    (acc, r) => ({ kwh: acc.kwh + usageOf(r).kwh, cost: acc.cost + usageOf(r).cost }),
+    NO_USAGE,
   );
-  const anyExceeded = residences.some(
-    (r) => computeStatus(getUsage(r).kwh, r.monthlyKwhLimit, r.alertThresholdPercent) === 'exceeded',
-  );
-  const anyWarning = residences.some(
-    (r) => computeStatus(getUsage(r).kwh, r.monthlyKwhLimit, r.alertThresholdPercent) === 'warning',
-  );
-  // TODO(API): quando o backend expuser o sinal de "no ritmo" no resumo geral,
-  // trocar o cálculo local abaixo por esse valor.
+  const anyExceeded = residences.some((r) => statusOf(r) === 'exceeded');
+  const anyWarning = residences.some((r) => statusOf(r) === 'warning');
   const summary = anyExceeded ? 'passou do limite' : anyWarning ? 'em alerta' : 'no ritmo';
 
   return (
     <main className="p-4 sm:p-8">
-      {/* Resumo */}
       <section className="flex w-full flex-col gap-6 rounded-xl bg-dark-blue p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <h1 className="text-xl text-white sm:text-2xl">
           Olá, {name || 'bem-vindo'}! Sua casa está <span className="text-yellow">{summary}</span>.
@@ -99,7 +93,6 @@ export default function Home() {
         </dl>
       </section>
 
-      {/* Residências */}
       <section aria-labelledby="residences-title" className="mt-10">
         <div className="mb-4 flex items-center justify-between">
           <h2 id="residences-title" className="text-2xl font-bold">
@@ -126,7 +119,7 @@ export default function Home() {
             <Carousel className="w-full">
               {residences.map((r) => (
                 <Link key={r.id} href={`/residences/${r.id}`} className="w-full">
-                  <ResidenceCard residence={r} />
+                  <ResidenceCard residence={r} usage={usageOf(r)} />
                 </Link>
               ))}
             </Carousel>
@@ -134,7 +127,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Histórico */}
       <HistorySection items={history} loading={loadingHistory} />
     </main>
   );

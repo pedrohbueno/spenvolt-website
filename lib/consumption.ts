@@ -1,3 +1,12 @@
+import type { Device } from '@/types/devices';
+
+export interface Usage {
+  kwh: number;
+  cost: number;
+}
+
+export const NO_USAGE: Usage = { kwh: 0, cost: 0 };
+
 export type Status = 'ok' | 'warning' | 'exceeded' | 'no-limit';
 
 export function usagePercent(used: number, limit?: number | null) {
@@ -16,4 +25,11 @@ export function computeStatus(used: number, limit?: number | null, alertAt?: num
 // kWh/mês = (potência em W × horas por dia × dias por mês) / 1000
 export function monthlyKwh(powerW: number, hoursPerDay: number, daysPerMonth: number) {
   return (powerW * hoursPerDay * daysPerMonth) / 1000;
+}
+
+export function sumUsage(devices: Pick<Device, 'monthlyKwh' | 'monthlyCost'>[]): Usage {
+  return devices.reduce(
+    (acc, d) => ({ kwh: acc.kwh + (d.monthlyKwh ?? 0), cost: acc.cost + (d.monthlyCost ?? 0) }),
+    NO_USAGE,
+  );
 }
