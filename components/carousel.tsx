@@ -49,7 +49,7 @@ function ArrowButton({
       aria-label={label}
       disabled={disabled}
       onClick={onClick}
-      className={`absolute ${side}-0 top-1/2 z-20 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white text-xl shadow-md transition duration-200 enabled:hover:scale-110 enabled:hover:bg-slate-100 enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none`}
+      className={`absolute ${side}-0 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-white text-xl shadow-md transition duration-200 md:grid enabled:hover:scale-110 enabled:hover:bg-slate-100 enabled:active:scale-95 disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-400 disabled:shadow-none`}
     >
       {children}
     </button>
@@ -94,7 +94,7 @@ export default function Carousel({ children, className }: { children: ReactNode;
     <div
       role="region"
       aria-roledescription="carrossel"
-      className={`relative px-12 ${className ?? ''}`}
+      className={`relative md:px-12 ${className ?? ''}`}
     >
       <ArrowButton side="left" label="Anterior" disabled={index <= 0} onClick={() => go(-1)}>
         ‹
@@ -118,7 +118,7 @@ export default function Carousel({ children, className }: { children: ReactNode;
         ))}
       </div>
 
-      <ArrowButton side="right" label="Próximo" disabled={index >= lastIndex} onClick={() => go(1)}>
+      <ArrowButton side="right" label="Próximo" disabled={index >= lastIndex} onClick={() => go(1)} >
         ›
       </ArrowButton>
     </div>
