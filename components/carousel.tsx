@@ -2,7 +2,7 @@
 
 import { useRef, type ReactNode } from 'react';
 
-export default function Carousel({ children }: { children: ReactNode }) {
+export default function Carousel({ children, className }: { children: ReactNode; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
   function scroll(dir: 1 | -1) {
@@ -12,7 +12,7 @@ export default function Carousel({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="relative">
+    <div className={`relative ${className || ''}`}>
       <button
         type="button"
         aria-label="Anterior"
@@ -24,7 +24,7 @@ export default function Carousel({ children }: { children: ReactNode }) {
 
       <div
         ref={ref}
-        className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-12 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-4 overflow-x-auto px-12 py-2 scrollbar-none [&::-webkit-scrollbar]:hidden"
       >
         {children}
       </div>

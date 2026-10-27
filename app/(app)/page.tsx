@@ -123,9 +123,11 @@ export default function Home() {
           ) : residences.length === 0 ? (
             <EmptyResidences />
           ) : (
-            <Carousel>
+            <Carousel className="w-full">
               {residences.map((r) => (
-                <ResidenceCard key={r.id} residence={r} />
+                <Link key={r.id} href={`/residences/${r.id}`} className="w-full">
+                  <ResidenceCard residence={r} />
+                </Link>
               ))}
             </Carousel>
           )}

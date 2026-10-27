@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import AuthSession from "@/components/auth-session";
 import Header from "@/components/layout/Header";
 
@@ -8,7 +8,9 @@ export default function AuthenticatedLayout({
   children: ReactNode;
 }) {
   return <AuthSession>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center">Carregando...</div>}>
       <Header />
+    </Suspense>
       <main className="px-4 pb-8 pt-20 sm:px-8 lg:px-16">
         {children}
       </main>

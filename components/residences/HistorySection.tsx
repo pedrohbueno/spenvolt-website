@@ -36,14 +36,16 @@ export function HistorySection({ items, loading }: { items: History[]; loading: 
           </p>
         ) : (
           <ul className="divide-y divide-gray-100">
-            {items.map((item) => (
+            {items.map((item) => {
+              console.log('History ID:', item.id);
+              return(
               <li key={"history-" + item.id} className="flex items-center justify-between py-3 text-sm">
                 <span className="text-dark-blue">{getEntityLabel(item.type, item.entityName)}</span>
                 <time dateTime={item.createdAt} className="text-gray-500">
                   {dateFmt.format(new Date(item.createdAt))}
                 </time>
               </li>
-            ))}
+            )})}
           </ul>
         )}
       </div>

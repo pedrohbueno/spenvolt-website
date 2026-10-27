@@ -1,56 +1,91 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
-import { search } from '@/lib/api/devices';
+import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import { findDevicesByResidence } from '@/lib/api/devices';
+import { findMembersByResidence } from '@/lib/api/members';
+import { useResidences } from '@/lib/hooks/use-residences';
+import { DEFAULT_FILTERS, applyDeviceFilters, getCategories, type DeviceFilterState } from '@/lib/devices';
+import ResidenceSelect from '@/components/residences/ResidenceSelect';
+import { EmptyResidences } from '@/components/residences/ResidenceCard';
+import DeviceFilters from '@/components/devices/DeviceFilters';
+import DeviceList, { EmptyDevices } from '@/components/devices/DeviceList';
 import type { Device } from '@/types/devices';
-import SpenVoltLogo from '@/components/spenvolt_logo';
+import type { Member } from '@/types/members';
 
 export default function DevicesPage() {
-    const [device, setDevice] = useState<Device | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+  const { residences, selectedId, select, loading: loadingResidences, error: residencesError } = useResidences();
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [filters, setFilters] = useState<DeviceFilterState>(DEFAULT_FILTERS);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-    async function onSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        setError(null);
-        setDevice(null);
-        setLoading(true);
-        const form = new FormData(e.currentTarget);
-        try {
-            console.log('URL:', process.env.API_URL, '| user:', process.env.APP_SECURITY_USER);
-            setDevice(await search(Number(form.get('id'))));
-        } catch {
-            setError('Dispositivo não encontrado ou API indisponível.');
-        } finally {
-            setLoading(false);
-        }
-    }
+  useEffect(() => {
+    if (selectedId === null) return;
+    const token = sessionStorage.getItem('token') ?? '';
+    let ignore = false;
 
-    return (
-        <>
+    setLoading(true);
+    setError(null);
+    Promise.all([findDevicesByResidence(token, selectedId), findMembersByResidence(token, selectedId)])
+      .then(([deviceList, memberList]) => {
+        if (ignore) return;
+        setDevices(deviceList);
+        setMembers(memberList);
+      })
+      .catch(() => !ignore && setError('Não foi possível carregar os dispositivos. Tente novamente.'))
+      .finally(() => !ignore && setLoading(false));
 
-            <form onSubmit={onSubmit} className="flex flex-col gap-4">
-                <label className="flex flex-col gap-1.5 text-sm text-slate-500">
-                    ID
-                    <input name="id" type="number" required
-                        className="h-[52px] rounded-xl border border-slate-300 bg-slate-50 px-3.5 text-base text-[#1B2A41]" />
-                </label>
-                <button type="submit" disabled={loading}
-                    className="h-[52px] rounded-xl bg-[#0E1A2B] text-base font-bold text-[#FFD43B] disabled:opacity-60">
-                    {loading ? 'Buscando...' : 'Buscar'}
-                </button>
-            </form>
+    return () => {
+      ignore = true;
+    };
+  }, [selectedId]);
 
-            {error && <p role="alert" className="text-center text-sm text-red-600">{error}</p>}
+  function changeResidence(id: number) {
+    select(id);
+    setFilters(DEFAULT_FILTERS);
+  }
 
-            {device && (
-                <div className="rounded-xl border border-slate-300 p-4 text-sm">
-                    <p className="font-bold">{device.name}</p>
-                    <p>{device.brand} · {device.category}</p>
-                    <p>{device.power} W</p>
-                    <p>{device.monthlyKwh} kWh · R$ {device.monthlyCost}</p>
-                </div>
-            )}
-        </>
-    );
+  const categories = useMemo(() => getCategories(devices), [devices]);
+  const visible = useMemo(() => applyDeviceFilters(devices, filters), [devices, filters]);
+
+  if (loadingResidences) {
+    return <p className="text-sm text-gray-500" role="status">Carregando…</p>;
+  }
+  if (residencesError) {
+    return <p className="text-sm text-red-600" role="alert">{residencesError}</p>;
+  }
+  if (residences.length === 0) {
+    return <div className="flex justify-center py-4"><EmptyResidences /></div>;
+  }
+
+  return (
+    <section aria-labelledby="devices-title" className="flex flex-col gap-6">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 id="devices-title" className="text-2xl font-bold">Dispositivos</h1>
+        <div className="flex items-center gap-3">
+          <ResidenceSelect residences={residences} value={selectedId} onChange={changeResidence} />
+          <Link
+            href="/devices/new"
+            className="rounded-lg bg-dark-blue px-4 py-2 text-sm font-semibold text-yellow focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            + Adicionar dispositivo
+          </Link>
+        </div>
+      </div>
+
+      <DeviceFilters categories={categories} members={members} value={filters} onChange={setFilters} />
+
+      {loading ? (
+        <p className="text-sm text-gray-500" role="status">Carregando dispositivos…</p>
+      ) : error ? (
+        <p className="text-sm text-red-600" role="alert">{error}</p>
+      ) : visible.length === 0 ? (
+        <EmptyDevices filtered={devices.length > 0} />
+      ) : (
+        <DeviceList devices={visible} />
+      )}
+    </section>
+  );
 }

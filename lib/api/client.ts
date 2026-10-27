@@ -21,5 +21,8 @@ export async function api<T>(path: string, init?: RequestInit & { token?: string
     },
   });
   if (!res.ok) throw new ApiError(res.status, `API ${res.status}: ${path}`);
-  return res.json() as Promise<T>;
+
+  // DELETE responde 204 sem corpo: res.json() falharia mesmo com a exclusão feita.
+  const body = await res.text();
+  return (body ? JSON.parse(body) : undefined) as T;
 }

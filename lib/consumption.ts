@@ -12,3 +12,8 @@ export function computeStatus(used: number, limit?: number | null, alertAt?: num
   if (pct >= (alertAt ?? 80)) return 'warning';
   return 'ok';
 }
+
+// kWh/mês = (potência em W × horas por dia × dias por mês) / 1000
+export function monthlyKwh(powerW: number, hoursPerDay: number, daysPerMonth: number) {
+  return (powerW * hoursPerDay * daysPerMonth) / 1000;
+}

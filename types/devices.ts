@@ -14,3 +14,6 @@ export interface Device {
   monthlyKwh: number | null;
   monthlyCost: number | null;
 }
+
+// Corpo do POST /devices. O dono vem do token; consumo e custo são calculados pela API.
+export type DeviceInput = Omit<Device, 'id' | 'ownerId' | 'monthlyKwh' | 'monthlyCost'>;
