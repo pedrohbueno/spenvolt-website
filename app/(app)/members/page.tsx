@@ -7,7 +7,7 @@ import { findMembersByResidence } from '@/lib/api/members';
 import { useResidences } from '@/lib/hooks/use-residences';
 import { devicesOfMember, usageByMember } from '@/lib/members';
 import ResidenceSelect from '@/components/residences/ResidenceSelect';
-import { EmptyResidences } from '@/components/residences/ResidenceCard';
+import { EmptyResidences } from '@/components/home/ResidenceCard';
 import MemberCard, { EmptyMembers } from '@/components/members/MemberCard';
 import MemberDetail from '@/components/members/MemberDetail';
 import type { Device } from '@/types/devices';

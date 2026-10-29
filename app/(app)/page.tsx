@@ -9,8 +9,8 @@ import { Residence } from '@/types/residences';
 import { NO_USAGE, computeStatus, sumUsage, type Usage } from '@/lib/consumption';
 import { brl, num } from '@/lib/format';
 import Carousel from '@/components/carousel';
-import { EmptyResidences, ResidenceCard } from '@/components/residences/ResidenceCard';
-import { HistorySection } from '@/components/residences/HistorySection';
+import { EmptyResidences, ResidenceCard } from '@/components/home/ResidenceCard';
+import { HistorySection } from '@/components/home/HistorySection';
 import type { History } from '@/types/history';
 
 function subscribeToName(callback: () => void) {

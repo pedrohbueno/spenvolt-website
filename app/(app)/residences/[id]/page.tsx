@@ -24,7 +24,7 @@ export default function ResidencePage() {
   const [residence, setResidence] = useState<Residence | null>(null);
   const [devices, setDevices] = useState<Device[]>([]);
   const [members, setMembers] = useState<Member[]>([]);
-  const [tab, setTab] = useState<ResidenceTab>('devices');
+  const [tab, setTab] = useState<ResidenceTab>('floorplan');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

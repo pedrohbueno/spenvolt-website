@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { createMember } from '@/lib/api/members';
 import { useResidences } from '@/lib/hooks/use-residences';
 import ResidenceSelect from '@/components/residences/ResidenceSelect';
-import { EmptyResidences } from '@/components/residences/ResidenceCard';
+import { EmptyResidences } from '@/components/home/ResidenceCard';
 
 const inputClass =
   'h-9 rounded-xl border border-slate-300 bg-slate-50 px-3 text-sm text-[#1B2A41]';

@@ -8,7 +8,7 @@ import { findMembersByResidence } from '@/lib/api/members';
 import { monthlyKwh } from '@/lib/consumption';
 import { useResidences } from '@/lib/hooks/use-residences';
 import ResidenceSelect from '@/components/residences/ResidenceSelect';
-import { EmptyResidences } from '@/components/residences/ResidenceCard';
+import { EmptyResidences } from '@/components/home/ResidenceCard';
 import ConsumptionPreview from '@/components/devices/ConsumptionPreview';
 import type { Member } from '@/types/members';
 

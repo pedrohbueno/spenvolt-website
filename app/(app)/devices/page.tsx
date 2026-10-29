@@ -7,7 +7,7 @@ import { findMembersByResidence } from '@/lib/api/members';
 import { useResidences } from '@/lib/hooks/use-residences';
 import { DEFAULT_FILTERS, applyDeviceFilters, getCategories, type DeviceFilterState } from '@/lib/devices';
 import ResidenceSelect from '@/components/residences/ResidenceSelect';
-import { EmptyResidences } from '@/components/residences/ResidenceCard';
+import { EmptyResidences } from '@/components/home/ResidenceCard';
 import DeviceFilters from '@/components/devices/DeviceFilters';
 import DeviceList, { EmptyDevices } from '@/components/devices/DeviceList';
 import type { Device } from '@/types/devices';

@@ -1,5 +1,6 @@
 import { brl, num } from '@/lib/format';
-import { ROOM_TYPES, formatArea, roomDevices, roomUsage } from '@/lib/floorplan';
+import { formatArea, roomDevices, roomUsage } from '@/lib/floorplan';
+import { AREA_BY_KIND, KIND_LABEL } from '@/lib/house-plan';
 import type { Device } from '@/types/devices';
 import type { Room } from '@/types/floorplan';
 
@@ -41,7 +42,7 @@ export default function RoomPanel({
         className="w-full rounded-lg border border-transparent px-1 text-lg font-bold text-dark-blue hover:border-slate-300"
       />
       <p id="room-title" className="mt-1 text-sm text-gray-500">
-        {ROOM_TYPES[room.type].label} · {formatArea(ROOM_TYPES[room.type].area)}
+        {KIND_LABEL[room.kind]} · {formatArea(AREA_BY_KIND[room.kind])}
       </p>
 
       <p className="mt-3 text-2xl font-bold text-dark-blue">{num.format(usage.kwh)} kWh</p>

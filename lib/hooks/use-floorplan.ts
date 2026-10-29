@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { createRoom, loadRooms, saveRooms } from '@/lib/floorplan';
-import type { Room, RoomType } from '@/types/floorplan';
+import { createRoom, isSlotFree, loadRooms, saveRooms } from '@/lib/floorplan';
+import type { RoomKind } from '@/lib/house-plan';
+import type { Room } from '@/types/floorplan';
 
 export function useFloorPlan(residenceId: number) {
   const [rooms, setRooms] = useState<Room[]>([]);
@@ -21,8 +22,10 @@ export function useFloorPlan(residenceId: number) {
 
   return {
     rooms,
-    addRoom: (type: RoomType) => {
-      const room = createRoom(type, rooms);
+    // Devolve null se o slot já estiver ocupado ou passar do máximo do tipo.
+    addRoom: (kind: RoomKind, slot: number, name?: string) => {
+      if (!isSlotFree(kind, slot, rooms)) return null;
+      const room = createRoom(kind, slot, name);
       commit([...rooms, room]);
       return room;
     },
