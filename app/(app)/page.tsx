@@ -3,15 +3,15 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { findResidences } from '@/lib/api/residences';
-import { findDevicesByResidence } from '@/lib/api/devices';
 import { findHistory } from '@/lib/api/history';
 import { Residence } from '@/types/residences';
-import { NO_USAGE, computeStatus, sumUsage, type Usage } from '@/lib/consumption';
+import { NO_USAGE, computeStatus, type Usage } from '@/lib/consumption';
 import { brl, num } from '@/lib/format';
 import Carousel from '@/components/carousel';
 import { EmptyResidences, ResidenceCard } from '@/components/home/ResidenceCard';
 import { HistorySection } from '@/components/home/HistorySection';
 import type { History } from '@/types/history';
+
 
 function subscribeToName(callback: () => void) {
   window.addEventListener('storage', callback);
@@ -24,7 +24,6 @@ function getStoredName() {
 
 export default function Home() {
   const [residences, setResidences] = useState<Residence[]>([]);
-  const [usages, setUsages] = useState<Record<number, Usage>>({});
   const [history, setHistory] = useState<History[]>([]);
   const [loadingResidences, setLoadingResidences] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
@@ -37,16 +36,8 @@ export default function Home() {
     const token = sessionStorage.getItem('token') ?? '';
 
     findResidences(token)
-      .then(async (list) => {
-        const entries = await Promise.all(
-          list.map(async (r) => {
-            const usage = await findDevicesByResidence(token, r.id).then(sumUsage, () => NO_USAGE);
-            return [r.id, usage] as const;
-          }),
-        );
-        setResidences(list);
-        setUsages(Object.fromEntries(entries));
-      })
+      findResidences(token)
+      .then(setResidences)
       .catch((e) => {
         console.error('Error fetching residences:', e);
         setError('Não foi possível carregar suas residências. Tente novamente.');
@@ -59,7 +50,7 @@ export default function Home() {
       .finally(() => setLoadingHistory(false));
   }, []);
 
-  const usageOf = (r: Residence) => usages[r.id] ?? NO_USAGE;
+  const usageOf = (r: Residence): Usage => ({ kwh: r.monthlyKwh ?? 0, cost: r.monthlyCost ?? 0 });
   const statusOf = (r: Residence) =>
     computeStatus(usageOf(r).kwh, r.monthlyKwhLimit, r.alertThresholdPercent);
 
@@ -75,7 +66,7 @@ export default function Home() {
     <main className="p-4 sm:p-8">
       <section className="flex w-full flex-col gap-6 rounded-xl bg-dark-blue p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <h1 className="text-xl text-white sm:text-2xl">
-          Olá, {name || 'bem-vindo'}! Sua casa está <span className="text-yellow">{summary}</span>.
+          Olá, <span className='text-blue-end'>{name || 'bem-vindo'}</span>! Sua casa está <span className="text-yellow">{summary}</span>.
         </h1>
         <dl className="flex gap-8 text-yellow">
           <div>

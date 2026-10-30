@@ -2,7 +2,7 @@ import { brl, num } from '@/lib/format';
 
 type Props = {
   name: string;
-  summary: string; // "no ritmo" | "em alerta" | "passou do limite"
+  summary: string;
   kwh: number;
   cost: number;
   residencesCount: number;

@@ -4,6 +4,8 @@ export interface Residence {
   address: string;
   tariff: number;
   alertThresholdPercent?: number ;
+  monthlyKwh?: number;
+  monthlyCost?: number;
   monthlyCostLimit?: number;
   monthlyKwhLimit?: number ;
   createdAt: string;
