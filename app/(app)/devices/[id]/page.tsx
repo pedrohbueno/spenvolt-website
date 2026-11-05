@@ -63,8 +63,6 @@ export default function DeviceDetailPage() {
     return <p className="text-sm text-red-600" role="alert">{error}</p>;
   }
 
-  const savingsHref = `/savings?q=${encodeURIComponent(device.category ?? device.name ?? '')}`;
-
   return (
     <div className="flex flex-col gap-6">
       <Link href="/devices" className="text-sm font-semibold text-dark-blue hover:underline">
@@ -77,14 +75,9 @@ export default function DeviceDetailPage() {
       {error && <p className="text-sm text-red-600" role="alert">{error}</p>}
 
       <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-        {/* TODO(Economize): rota /savings será criada na tela de ofertas. */}
-        <Link href={savingsHref} className={primaryButton}>
-          Ver alternativas mais econômicas
-        </Link>
-        {/* TODO(API): edição exige PUT /api/devices/{id} e a tela de edição. */}
-        <button type="button" disabled className={secondaryButton}>
+        <Link href={`/devices/${device.id}/edit`} className={primaryButton}>
           Editar
-        </button>
+        </Link>
         <button
           type="button"
           onClick={onRemove}

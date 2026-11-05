@@ -31,8 +31,21 @@ export async function createDevice(token: string, device: DeviceInput) {
   });
 }
 
-// TODO(API): endpoint DELETE /api/devices/{id} ainda não existe no backend.
-// Se responder 204 (sem corpo), ajustar o client para não chamar res.json().
+export async function updateDevice(token: string, id: number, device: DeviceInput) {
+  return api<Device>('/devices/' + id, {
+    method: 'PUT',
+    body: JSON.stringify(device),
+    token,
+  });
+}
+
+export async function findAllDevices(token: string) {
+  return api<Device[]>('/devices', {
+    method: 'GET',
+    token,
+  });
+}
+
 export async function deleteDevice(token: string, id: number) {
   return api<void>('/devices/' + id, {
     method: 'DELETE',

@@ -9,7 +9,7 @@ export function getSessionName() {
   return sessionStorage.getItem('name') ?? '';
 }
 
-// TODO(API): o token ainda não garante o campo de e-mail; ajustar quando o payload tiver.
+// O e-mail vai no campo sub do token.
 export function getSessionEmail() {
   try {
     const payload = JSON.parse(atob((sessionStorage.getItem('token') ?? '').split('.')[1]));

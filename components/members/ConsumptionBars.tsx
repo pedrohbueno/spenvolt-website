@@ -9,7 +9,7 @@ export default function ConsumptionBars({ items, label }: { items: BarItem[]; la
   const max = Math.max(...items.map((i) => i.value), 1);
 
   return (
-    <ul aria-label={label} className="flex flex-col gap-4">
+    <ul aria-label={label} className="flex flex-col gap-4 h-80 max-h-[500px] overflow-y-auto">
       {items.map((item) => (
         <li key={item.id}>
           <div className="mb-1 flex items-center justify-between gap-4 text-sm">
