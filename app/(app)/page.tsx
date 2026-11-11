@@ -60,13 +60,13 @@ export default function Home() {
   );
   const anyExceeded = residences.some((r) => statusOf(r) === 'exceeded');
   const anyWarning = residences.some((r) => statusOf(r) === 'warning');
-  const summary = anyExceeded ? 'passou do limite' : anyWarning ? 'em alerta' : 'no ritmo';
+  const summary = anyExceeded ? 'passou do limite' : anyWarning ? 'está em alerta' : 'estáno ritmo';
 
   return (
     <main className="p-4 sm:p-8">
       <section className="flex w-full flex-col gap-6 rounded-xl bg-dark-blue p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
         <h1 className="text-xl text-white sm:text-2xl">
-          Olá, <span className='text-blue-end'>{name || 'bem-vindo'}</span>! Sua casa está <span className="text-yellow">{summary}</span>.
+          Olá, <span className='text-blue-end'>{name || 'bem-vindo'}</span>! Sua casa <span className="text-yellow">{summary}</span>.
         </h1>
         <dl className="flex gap-8 text-yellow">
           <div>
