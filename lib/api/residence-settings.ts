@@ -3,7 +3,6 @@
 import { api } from './client';
 import type { Residence } from '@/types/residences';
 
-// TODO(API): PUT e DELETE em /api/residences/{id} ainda não existem no backend.
 export async function updateResidence(
   token: string,
   id: number,

@@ -19,9 +19,9 @@ export default function FloorPlan({ residenceId, devices }: { residenceId: numbe
   const [dialog, setDialog] = useState<{ kind?: RoomKind; slot?: number } | null>(null);
 
   // A seleção fica na URL (?room=<id>), que é onde o HousePlan a coloca ao clicar num cômodo.
-  const selected = plan.rooms.find((r) => r.id === roomParam) ?? null;
+  const selected = plan.rooms.find((r) => String(r.id) === roomParam) ?? null;
   const houseKwh = devices.reduce((sum, d) => sum + (d.monthlyKwh ?? 0), 0);
-  const assignedIds = new Set(plan.rooms.flatMap((r) => r.deviceIds));
+  const assignedIds = new Set(plan.allRooms.flatMap((r) => r.deviceIds));
 
   const planRooms: PlanRoom[] = plan.rooms.map((r) => ({
     id: r.id,
@@ -31,18 +31,27 @@ export default function FloorPlan({ residenceId, devices }: { residenceId: numbe
     kwh: roomUsage(r, devices).kwh,
   }));
 
-  const select = (id: string | null) =>
+  const select = (id: number | null) =>
     router.replace(id ? `${pathname}?room=${id}` : pathname, { scroll: false });
 
-  function confirmAdd(kind: RoomKind, slot: number, name: string) {
-    const room = plan.addRoom(kind, slot, name);
+  function changeFloor(id: number) {
+    plan.selectFloor(id);
+    select(null);
+  }
+
+  async function addFloor() {
+    await plan.addFloor();
+    select(null);
+  }
+
+  async function confirmAdd(kind: RoomKind, slot: number, name: string) {
+    const room = await plan.addRoom(kind, slot, name);
     setDialog(null);
     if (room) select(room.id);
   }
 
-  function removeRoom(id: string) {
-    plan.removeRoom(id);
-    select(null);
+  async function removeRoom(id: number) {
+    if (await plan.removeRoom(id)) select(null);
   }
 
   return (
@@ -57,7 +66,8 @@ export default function FloorPlan({ residenceId, devices }: { residenceId: numbe
             <button
               type="button"
               onClick={() => setDialog({})}
-              className="rounded-lg bg-dark-blue px-3 py-1.5 text-sm font-semibold text-yellow focus-visible:outline-2 focus-visible:outline-offset-2"
+              disabled={plan.loading}
+              className="rounded-lg bg-dark-blue px-3 py-1.5 text-sm font-semibold text-yellow focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-60"
             >
               + Adicionar seção
             </button>
@@ -65,7 +75,40 @@ export default function FloorPlan({ residenceId, devices }: { residenceId: numbe
           </div>
         </div>
 
-        <HousePlan rooms={planRooms} onAddRoom={(kind, slot) => setDialog({ kind, slot })} />
+        <div role="tablist" aria-label="Andares" className="mb-4 flex items-center gap-2 overflow-x-auto pb-1">
+          {plan.floors.map((floor) => (
+            <button
+              key={floor.id}
+              type="button"
+              role="tab"
+              aria-selected={floor.id === plan.floorId}
+              onClick={() => changeFloor(floor.id)}
+              className="shrink-0 whitespace-nowrap rounded-full border border-slate-300 px-4 py-1.5 text-sm font-semibold text-dark-blue aria-selected:border-dark-blue aria-selected:bg-dark-blue aria-selected:text-yellow focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              {floor.name}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={addFloor}
+            disabled={plan.loading}
+            className="shrink-0 whitespace-nowrap rounded-full border border-dashed border-slate-400 px-4 py-1.5 text-sm font-semibold text-gray-500 hover:border-dark-blue hover:text-dark-blue disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2"
+          >
+            + Andar
+          </button>
+        </div>
+
+        {plan.error && (
+          <p role="alert" className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            {plan.error}
+          </p>
+        )}
+
+        {plan.loading ? (
+          <p className="py-16 text-center text-sm text-gray-500">Carregando planta...</p>
+        ) : (
+          <HousePlan rooms={planRooms} onAddRoom={(kind, slot) => setDialog({ kind, slot })} />
+        )}
       </section>
 
       <div className="flex flex-col gap-4">

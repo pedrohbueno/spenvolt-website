@@ -3,6 +3,8 @@
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { findResidences } from '@/lib/api/residences';
+import { findAllDevices } from '@/lib/api/devices';
+import { findMemberConsumption } from '@/lib/api/members';
 import { findHistory } from '@/lib/api/history';
 import { Residence } from '@/types/residences';
 import { NO_USAGE, computeStatus, type Usage } from '@/lib/consumption';
@@ -10,7 +12,12 @@ import { brl, num } from '@/lib/format';
 import Carousel from '@/components/carousel';
 import { EmptyResidences, ResidenceCard } from '@/components/home/ResidenceCard';
 import { HistorySection } from '@/components/home/HistorySection';
+import MemberUsage from '@/components/home/MemberUsage';
+import ResidenceComparison from '@/components/home/ResidenceComparison';
+import TopDevices from '@/components/home/TopDevices';
+import type { Device } from '@/types/devices';
 import type { History } from '@/types/history';
+import type { MemberConsumption } from '@/types/members';
 
 
 function subscribeToName(callback: () => void) {
@@ -25,6 +32,9 @@ function getStoredName() {
 export default function Home() {
   const [residences, setResidences] = useState<Residence[]>([]);
   const [history, setHistory] = useState<History[]>([]);
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [memberUsage, setMemberUsage] = useState<MemberConsumption[]>([]);
+  const [loadingInsights, setLoadingInsights] = useState(true);
   const [loadingResidences, setLoadingResidences] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,6 +53,14 @@ export default function Home() {
         setError('Não foi possível carregar suas residências. Tente novamente.');
       })
       .finally(() => setLoadingResidences(false));
+
+    Promise.all([findAllDevices(token), findMemberConsumption(token)])
+      .then(([allDevices, members]) => {
+        setDevices(allDevices);
+        setMemberUsage(members);
+      })
+      .catch((e) => console.error('Error fetching insights:', e))
+      .finally(() => setLoadingInsights(false));
 
     findHistory(token)
       .then(setHistory)
@@ -118,7 +136,15 @@ export default function Home() {
         </div>
       </section>
 
-      <HistorySection items={history} loading={loadingHistory} />
+      <div className="mt-10 grid gap-6 lg:grid-cols-2 lg:gap-10">
+        <TopDevices devices={devices} residences={residences} loading={loadingInsights} />
+        <MemberUsage members={memberUsage} loading={loadingInsights} />
+      </div>
+
+      <div className="mt-10 flex flex-col gap-10">
+        <ResidenceComparison residences={residences} devices={devices} usageOf={usageOf} />
+        <HistorySection items={history} loading={loadingHistory} />
+      </div>
     </main>
   );
 }
